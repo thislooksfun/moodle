@@ -3649,7 +3649,8 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             ];
 
         $result = $assign->testable_process_save_quick_grades($data);
-        $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
+        $this->assertIsString($result);
+        $this->assertEquals(get_string('quickgradingchangessaved', 'assign'), $result);
         $grade = $assign->get_user_grade($student->id, false);
         $this->assertEquals(60.0, $grade->grade);
 
@@ -3661,7 +3662,9 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             'quickgrade_' . $student->id => '50.0'
         );
         $result = $assign->testable_process_save_quick_grades($data);
-        $this->assertContains(get_string('errorrecordmodified', 'assign'), $result);
+        $this->assertIsArray($result);
+        $this->assertEquals(get_string('errorrecordmodified', 'assign'), $result['message']);
+        $this->assertTrue($result['gradingerror']);
         $grade = $assign->get_user_grade($student->id, false);
         $this->assertFalse($grade);
 
@@ -3673,7 +3676,8 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             'quickgrade_' . $student->id => '40.0'
         );
         $result = $assign->testable_process_save_quick_grades($data);
-        $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
+        $this->assertIsString($result);
+        $this->assertEquals(get_string('quickgradingchangessaved', 'assign'), $result);
         $grade = $assign->get_user_grade($student->id, false);
         $this->assertEquals(40.0, $grade->grade);
 
@@ -3687,13 +3691,16 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             'quickgrade_' . $student->id => '30.0'
         );
         $result = $assign->testable_process_save_quick_grades($data);
-        $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
+        $this->assertIsString($result);
+        $this->assertEquals(get_string('quickgradingchangessaved', 'assign'), $result);
         $grade = $assign->get_user_grade($student->id, false);
         $this->assertEquals(30.0, $grade->grade);
 
         // Now update using 'old' data. Should fail.
         $result = $assign->testable_process_save_quick_grades($pastdata);
-        $this->assertContains(get_string('errorrecordmodified', 'assign'), $result);
+        $this->assertIsArray($result);
+        $this->assertEquals(get_string('errorrecordmodified', 'assign'), $result['message']);
+        $this->assertTrue($result['gradingerror']);
         $grade = $assign->get_user_grade($student->id, false);
         $this->assertEquals(30.0, $grade->grade);
     }
